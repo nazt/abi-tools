@@ -1,7 +1,5 @@
 import type { Arguments, CommandBuilder } from 'yargs';
-import { AbiItem } from 'web3-utils'
-
-
+import { AbiInput, AbiItem } from 'web3-utils'
 
 
 export const command: string = 'get <address>';
@@ -9,25 +7,28 @@ export const desc: string = 'Query <address>\'s ABI';
 
 import axios, { AxiosResponse } from "axios"
 
-const Table = require('cli-table')
+const Table = require('cli-table3')
 const serializeParams = (it: any, ctx: any) => it.map((it: any) => `${it.name || ''}:${it.type}`).join('\n')
 
-// String.prototype.capitalize = function () {
-//     return this.charAt(0).toUpperCase() + this.slice(1)
-// }
 
 Table.prototype.getData = function () {
     return this.slice(0)
 }
 
-// Table.prototype.getDataObject = function () {
-//     return this.slice(0).map((it:) => _.object(this.getHead(), it))
-// }
-
 Table.prototype.getHead = function () {
     return this.options.head
 }
-const getAbiTableData = (abi: AbiItem) => {
+
+const isInConstructor = (abi: AbiItem[], funcName: string): string => {
+    return abi[0]?.inputs?.map((params: AbiInput) => params.name).indexOf(`_${funcName}`) !== -1 ? '✓' : ''
+}
+
+type MyAbi = AbiItem & {
+    isInConstructor: string
+    signature: string
+}
+
+const getAbiTableData = (abi: MyAbi[]) => {
     const rows: any = []
     let head = [
         'idx',
@@ -43,41 +44,41 @@ const getAbiTableData = (abi: AbiItem) => {
         'signature',
     ]
 
-    const indexedFuncs: any = {}
-    console.log(abi)
+    const table = new Table({ head })
+    const indexedFuncs = {} as any
+
     for (const [idx, func] of Object.entries(abi).slice(0)) {
         console.log(func.name)
-        indexedFuncs[func.name] = Object.assign({}, func)
+        indexedFuncs[func.name || ''] = Object.assign({}, func)
+        func.inputs = func.inputs || []
+        func.outputs = func.outputs || []
+        func.name = func.name || ''
+        // x.stateMutability = func.stateMutability || ''
+        func.isInConstructor = isInConstructor(abi, func?.name || "")
+        const row = [
+            idx,
+            func.isInConstructor,
+            func.name,
+            func.type,
+            func.inputs.length,
+            serializeParams(func.inputs, func),
+            serializeParams(func.outputs, func),
+            // x.constant || "xx",
+            // x.payable || 'yy',
+            func.stateMutability,
+            // x.signature || 'zz',
+            func.signature,
+        ]
+
+        table.push(row)
     }
 
-    //     func.inputs = func.inputs || []
-    //     func.outputs = func.outputs || []
-    //     func.name = func.name || ''
-    //     func.stateMutability = func.stateMutability || ''
-    //     func.isInConstructor = isInConstructor(abi, func.name)
-
-    //     const row = [
-    //         idx,
-    //         func.isInConstructor,
-    //         func.name,
-    //         func.type,
-    //         // func.constant || "",
-    //         // func.payable || '',
-    //         func.inputs.length,
-    //         serializeParams(func.inputs, func),
-    //         serializeParams(func.outputs, func),
-    //         func.stateMutability,
-    //         func.signature || '',
-    //     ]
-
-    //     rows.push(row)
-    // }
-
-    const methodsTable = new Table({ head, rows })
+    // const methodsTable = new Table({ head, rows })
+    console.log(table.toString())
 
     return {
         indexedFuncs,
-        table: methodsTable,
+        table: table,
     }
 }
 
@@ -140,8 +141,8 @@ export const handler = (argv: Arguments<Options>): void => {
             const { table, indexedFuncs } = getAbiTableData(abi)
             console.log(table.toString())
         }
-        console.log(abi)
+        else {
+            console.log(JSON.stringify(abi, null, 2))
+        }
     })
 };
-
-handler({ address: '0x3c0Bba9a0b4D920e2d1809D5952b883ABeEa6B5b', table: true } as Arguments<Options>)
