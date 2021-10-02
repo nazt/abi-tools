@@ -72,9 +72,6 @@ const getAbiTableData = (abi: MyAbi[]) => {
         table.push(row)
     }
 
-    // const methodsTable = new Table({ head, rows })
-    // console.log(table.toString())
-
     return {
         indexedFuncs,
         table: table,
