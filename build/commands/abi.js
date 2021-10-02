@@ -9,15 +9,9 @@ exports.desc = 'Query <address>\'s ABI';
 const axios_1 = __importDefault(require("axios"));
 const Table = require('cli-table3');
 const serializeParams = (it, ctx) => it.map((it) => `${it.name || ''}:${it.type}`).join('\n');
-// String.prototype.capitalize = function () {
-//     return this.charAt(0).toUpperCase() + this.slice(1)
-// }
 Table.prototype.getData = function () {
     return this.slice(0);
 };
-// Table.prototype.getDataObject = function () {
-//     return this.slice(0).map((it:) => _.object(this.getHead(), it))
-// }
 Table.prototype.getHead = function () {
     return this.options.head;
 };
@@ -40,10 +34,6 @@ const getAbiTableData = (abi) => {
         'signature',
     ];
     const table = new Table({ head });
-    // const indexedFuncs: keyof AbiItem
-    // console.log(abi)
-    // type UserEvent = Event & {UserId: string}
-    // const x: MyAbi = abi[0] as MyAbi
     const indexedFuncs = {};
     for (const [idx, func] of Object.entries(abi).slice(0)) {
         console.log(func.name);

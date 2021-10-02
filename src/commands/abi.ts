@@ -48,7 +48,6 @@ const getAbiTableData = (abi: MyAbi[]) => {
     const indexedFuncs = {} as any
 
     for (const [idx, func] of Object.entries(abi).slice(0)) {
-        console.log(func.name)
         indexedFuncs[func.name || ''] = Object.assign({}, func)
         func.inputs = func.inputs || []
         func.outputs = func.outputs || []
@@ -74,7 +73,7 @@ const getAbiTableData = (abi: MyAbi[]) => {
     }
 
     // const methodsTable = new Table({ head, rows })
-    console.log(table.toString())
+    // console.log(table.toString())
 
     return {
         indexedFuncs,
