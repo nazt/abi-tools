@@ -10,7 +10,8 @@
     "@types/axios": "^0.14.0",
     "axios": "^0.22.0",
     "cli-table": "^0.3.6",
-    "conf": "^10.0.3"
+    "conf": "^10.0.3",
+    "web3-utils": "^1.6.0"
   },
   "name": "abi-tools",
   "description": "",

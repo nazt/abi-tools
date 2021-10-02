@@ -1,4 +1,5 @@
 import type { Arguments, CommandBuilder } from 'yargs';
+import { AbiItem } from 'web3-utils'
 
 
 
@@ -26,7 +27,7 @@ Table.prototype.getData = function () {
 Table.prototype.getHead = function () {
     return this.options.head
 }
-const getAbiTableData = (abi: any) => {
+const getAbiTableData = (abi: AbiItem) => {
     const rows: any = []
     let head = [
         'idx',
@@ -42,9 +43,11 @@ const getAbiTableData = (abi: any) => {
         'signature',
     ]
 
-    const indexedFuncs = {}
+    const indexedFuncs: any = {}
+    console.log(abi)
     for (const [idx, func] of Object.entries(abi).slice(0)) {
-        // indexedFuncs[func.name] = Object.assign({}, func)
+        console.log(func.name)
+        indexedFuncs[func.name] = Object.assign({}, func)
     }
 
     //     func.inputs = func.inputs || []
@@ -78,9 +81,10 @@ const getAbiTableData = (abi: any) => {
     }
 }
 
+const Conf = require('conf');
+const config = new Conf();
+
 async function getAbi({ BSCSCAN_URL, address }: any) {
-    const Conf = require('conf');
-    const config = new Conf();
     let cacheKey = `${BSCSCAN_URL}${address}`.toLowerCase()
     let cache = config.get(cacheKey)
 
@@ -127,14 +131,17 @@ export const builder: CommandBuilder<Options, Options> = (yargs) =>
 
 export const handler = (argv: Arguments<Options>): void => {
     const { address, table }: Options = argv;
-    console.log(table, address)
 
     getAbi({
         BSCSCAN_URL: 'https://api.bscscan.com/api?module=contract',
         address
     }).then(abi => {
+        if (table) {
+            const { table, indexedFuncs } = getAbiTableData(abi)
+            console.log(table.toString())
+        }
         console.log(abi)
     })
 };
 
-// handler({ address: '0x3c0Bba9a0b4D920e2d1809D5952b883ABeEa6B5b', table: true } as Arguments<Options>)
+handler({ address: '0x3c0Bba9a0b4D920e2d1809D5952b883ABeEa6B5b', table: true } as Arguments<Options>)

@@ -108,4 +108,4 @@ const handler = (argv) => {
     });
 };
 exports.handler = handler;
-// handler({ address: '0x3c0Bba9a0b4D920e2d1809D5952b883ABeEa6B5b', table: true } as Arguments<Options>)
+(0, exports.handler)({ address: '0x3c0Bba9a0b4D920e2d1809D5952b883ABeEa6B5b', table: true });
