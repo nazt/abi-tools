@@ -7,7 +7,7 @@
     "@types/axios": "^0.14.0"
   },
   "bin": {
-    "abi-utils": "./build/cli.js"
+    "abi-tools": "./build/cli.js"
   },
   "dependencies": {
     "axios": "^0.22.0",
@@ -16,9 +16,9 @@
     "web3-utils": "^1.6.0",
     "yargs": "^17.2.1"
   },
-  "name": "@nazt/abi-utils",
+  "name": "abi-tools",
   "description": "",
-  "version": "1.0.4",
+  "version": "1.0.1",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
